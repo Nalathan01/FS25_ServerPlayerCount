@@ -87,7 +87,7 @@ function ServerPlayerCount:update(dt)
     end
 end
 
-function ServerPlayerCount:draw()
+function ServerPlayerCount:drawOverlay()
     if g_currentMission == nil or not self:isMultiplayerSession() then
         return
     end
@@ -121,6 +121,7 @@ function ServerPlayerCount:draw()
     setTextBold(false)
     setTextAlignment(RenderText.ALIGN_LEFT)
 end
+
 
 function ServerPlayerCount:isMultiplayerSession()
     if g_currentMission == nil then
@@ -336,6 +337,16 @@ function ServerPlayerCount:resetServerLogState()
 end
 
 addModEventListener(ServerPlayerCount)
+
+
+if GameInfoDisplay ~= nil and GameInfoDisplay.draw ~= nil then
+    GameInfoDisplay.draw = Utils.appendedFunction(GameInfoDisplay.draw, function(display)
+        if display ~= nil and type(display.getVisible) == "function" and display:getVisible() then
+            ServerPlayerCount:drawOverlay()
+        end
+    end)
+end
+
 
 InGameMenuSettingsFrame.onFrameOpen = Utils.appendedFunction(InGameMenuSettingsFrame.onFrameOpen, function()
     ServerPlayerCount:onSettingsFrameOpen()

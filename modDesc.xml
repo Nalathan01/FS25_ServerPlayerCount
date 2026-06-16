@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="109">
     <author>Nalathan</author>
-    <version>1.0.0.0</version>
+    <version>1.0.1.0</version>
     <title>
         <en>Server Player Count</en>
         <de>Server Spieleranzeige</de>
+        <fr>Nombre De Joueurs Du Serveur</fr>
     </title>
     <description>
         <en><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
@@ -18,7 +19,10 @@ The server status indicator can be reset in the game settings if a detected mess
 
 Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
 
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></en>
+GitHub: https://github.com/Nalathan01/FS25_ServerPlayerCount/issues
+
+Changelog 1.0.1.0:
+- The HUD display now follows the visibility of the game HUD.]]></en>
         <de><![CDATA[Zeigt auf Multiplayer-Servern die aktuelle Spieleranzahl direkt im HUD an.
 
 Die Anzeige besteht aus einer kompakten Spielerzahl mit Server-Statuspunkt:
@@ -30,307 +34,25 @@ Der Server-Statuspunkt kann in den Spieleinstellungen zurückgesetzt werden, fal
 
 Hinweis: Im Singleplayer wird die HUD-Anzeige automatisch ausgeblendet, falls die Mod dort versehentlich aktiviert wurde.
 
-Weitere Erkennungen können später ergänzt werden, falls Logdaten im Spiel sauberer ausgewertet werden können.]]></de>
-        <fr><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
+GitHub: https://github.com/Nalathan01/FS25_ServerPlayerCount/issues
 
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
+Changelog 1.0.1.0:
+- Die HUD-Anzeige folgt jetzt der Sichtbarkeit des Spiel-HUDs.]]></de>
+        <fr><![CDATA[Affiche le nombre actuel de joueurs directement dans le HUD sur les serveurs multijoueurs.
 
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
+L'affichage se compose d'un compteur compact avec un indicateur d'état du serveur :
+Vert : aucun avertissement Lua côté serveur ni aucune erreur Lua côté serveur détectés
+Jaune : avertissement Lua côté serveur détecté
+Rouge : erreur Lua côté serveur détectée
 
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
+L'indicateur d'état du serveur peut être réinitialisé dans les paramètres du jeu lorsqu'un message détecté a été vérifié et n'est pas critique.
 
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></fr>
-        <es><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
+Remarque : en mode solo, l'affichage du HUD est automatiquement masqué si le mod a été activé par erreur.
 
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
+GitHub: https://github.com/Nalathan01/FS25_ServerPlayerCount/issues
 
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></es>
-        <it><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></it>
-        <nl><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></nl>
-        <pl><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></pl>
-        <cz><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></cz>
-        <cs><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></cs>
-        <hu><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></hu>
-        <ru><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></ru>
-        <pt><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></pt>
-        <br><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></br>
-        <tr><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></tr>
-        <ro><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></ro>
-        <jp><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></jp>
-        <kr><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></kr>
-        <ct><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></ct>
-        <ea><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></ea>
-        <da><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></da>
-        <fi><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></fi>
-        <no><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></no>
-        <sv><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></sv>
-        <fc><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></fc>
-        <uk><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></uk>
-        <vi><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></vi>
-        <id><![CDATA[Shows the current player count directly in the HUD on multiplayer servers.
-
-The display consists of a compact player count with a server status indicator:
-Green: no server-side Lua warning or server-side Lua error detected
-Yellow: server-side Lua warning detected
-Red: server-side Lua error detected
-
-The server status indicator can be reset in the game settings if a detected message has been checked and is not critical.
-
-Note: In singleplayer, the HUD display is hidden automatically if the mod was enabled there by mistake.
-
-Additional detections may be added later if log data can be evaluated more cleanly in-game.]]></id>
+Changelog 1.0.1.0 :
+- L'affichage du HUD suit désormais la visibilité du HUD du jeu.]]></fr>
     </description>
     <iconFilename>icon_ServerPlayerCount.dds</iconFilename>
     <multiplayer supported="true"/>
@@ -341,22 +63,27 @@ Additional detections may be added later if log data can be evaluated more clean
         <text name="spc_hudLabel">
             <en>Players online</en>
             <de>Spieler online</de>
+            <fr>Joueurs en ligne</fr>
         </text>
         <text name="spc_playersOnline">
             <en>Players online</en>
             <de>Spieler online</de>
+            <fr>Joueurs en ligne</fr>
         </text>
         <text name="spc_settings_header">
             <en>Server Player Count</en>
             <de>Server Spieleranzeige</de>
+            <fr>Nombre de joueurs du serveur</fr>
         </text>
         <text name="spc_settings_resetStatus_label">
             <en>Warning Status</en>
             <de>Warnstatus</de>
+            <fr>État des avertissements</fr>
         </text>
         <text name="spc_settings_resetStatus_button">
             <en>Reset Status</en>
             <de>Status zurücksetzen</de>
+            <fr>Réinitialiser l'état</fr>
         </text>
     </l10n>
 </modDesc>
