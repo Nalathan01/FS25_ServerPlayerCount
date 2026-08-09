@@ -10,6 +10,10 @@ Server Player Count is a Farming Simulator 25 mod that shows the current player 
 - HUD display follows the visibility of the game HUD
 - Automatically hidden in singleplayer if the mod was enabled there by mistake
 
+## Current version
+
+1.0.1.0
+
 ## Feedback
 
 Bug reports, compatibility feedback and feature requests are welcome through GitHub Issues.
