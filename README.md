@@ -1,45 +1,21 @@
 # Server Player Count
 
-Server Player Count is a Farming Simulator 25 mod that shows the current player count directly in the HUD on multiplayer servers.
+Adds a small player counter to the HUD on multiplayer servers, so you can see at a glance how many people are on without opening the player list.
 
-## Features
+## What it does
 
-- Compact player count display directly in the HUD on multiplayer servers
-- Server status indicator: green (no issues), yellow (server-side Lua warning), red (server-side Lua error)
-- Status indicator can be reset in the game settings once a detected message has been checked and is not critical
-- HUD display follows the visibility of the game HUD
-- Automatically hidden in singleplayer if the mod was enabled there by mistake
+Shows a compact player count next to a status dot: green means no server-side Lua warning or error has been seen, yellow means a warning turned up, red means an actual error did. The dot can be reset from the game settings once you've checked a flagged message and decided it's not worth worrying about.
 
-## Current version
-
-1.0.1.0
+The display follows the game HUD's own visibility, and hides itself automatically in singleplayer in case the mod ends up active there by mistake.
 
 ## Feedback
 
-Bug reports, compatibility feedback and feature requests are welcome through GitHub Issues.
-
-Please include:
-
-- Mod version
-- Game version
-- Server or singleplayer
-- A short description of what happened
-- log.txt if the issue is technical
-
-## Download
-
-Always up to date on Forbidden Mods:
-
-https://forbidden-mods.de/filebase/file/77314-spieleranzahl-auf-servern/
-
-Official download on ModHub:
-
-https://www.farming-simulator.com/mod.php?mod_id=364299
+Something not showing up right? Open a GitHub issue with your mod/game version and whether it was singleplayer or a server, `log.txt` helps if it looks like a script error.
 
 ## Links
 
-- Website: https://www.nalathan.de/
-- YouTube: https://www.youtube.com/@nalathangaming
 - Forbidden Mods: https://forbidden-mods.de/filebase/file/77314-spieleranzahl-auf-servern/
 - ModHub: https://www.farming-simulator.com/mod.php?mod_id=364299
+- Website: https://www.nalathan.de/
+- YouTube: https://www.youtube.com/@nalathangaming
 - Issues: https://github.com/Nalathan01/FS25_ServerPlayerCount/issues
