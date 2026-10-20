@@ -28,36 +28,32 @@ end
 
 function ServerPlayerCountStatusEvent:run(connection)
     if self.isResetRequest then
-        if g_server ~= nil then
+        if g_server ~= nil and not connection:getIsServer() and ServerPlayerCount:getIsConnectionMasterUser(connection) then
             ServerPlayerCount:setServerLogState(0, true)
         end
-    else
+    elseif connection:getIsServer() then
         ServerPlayerCount:setServerLogState(self.state or 0, false)
     end
 end
 
 ServerPlayerCount = {}
+ServerPlayerCount.modDirectory = g_currentModDirectory
+ServerPlayerCount.modName = g_currentModName
 
-ServerPlayerCount.hudX = 0.985
-ServerPlayerCount.hudY = 0.975
-ServerPlayerCount.textSize = 0.012
-ServerPlayerCount.boxWidth = 0.048
-ServerPlayerCount.boxHeight = 0.020
-ServerPlayerCount.iconOffsetX = 0.006
-ServerPlayerCount.iconOffsetY = 0.006
-ServerPlayerCount.iconSize = 0.005
-ServerPlayerCount.textOffsetX = 0.020
-ServerPlayerCount.textOffsetY = 0.0045
+ServerPlayerCount.hudOverlays = nil
 ServerPlayerCount.currentPlayers = 1
 ServerPlayerCount.maxPlayers = nil
 ServerPlayerCount.updateTimer = 0
 ServerPlayerCount.syncTimer = 0
 ServerPlayerCount.serverLogState = 0
+ServerPlayerCount.stateDirty = false
+ServerPlayerCount.showWarnings = false
 ServerPlayerCount.resetButton = nil
+ServerPlayerCount.warningsButton = nil
 ServerPlayerCount.settingsHeader = nil
 ServerPlayerCount.settingsRow = nil
+ServerPlayerCount.warningsRow = nil
 ServerPlayerCount.settingsInitialized = false
-ServerPlayerCount.backgroundColor = {0.005, 0.005, 0.005, 0.82}
 ServerPlayerCount.textColor = {1, 1, 1, 1}
 ServerPlayerCount.okColor = {0.55, 0.85, 0.10, 1}
 ServerPlayerCount.warningColor = {0.95, 0.72, 0.05, 1}
@@ -81,14 +77,65 @@ function ServerPlayerCount:update(dt)
         self.maxPlayers = self:getServerCapacity()
     end
 
+    if g_server ~= nil and self.stateDirty then
+        self.stateDirty = false
+        self.syncTimer = 0
+        self:broadcastServerLogState()
+    end
+
     if g_server ~= nil and self.syncTimer > 5000 then
         self.syncTimer = 0
         self:broadcastServerLogState()
     end
 end
 
-function ServerPlayerCount:drawOverlay()
+function ServerPlayerCount:deleteMap()
+    if self.hudOverlays ~= nil then
+        for _, overlay in pairs(self.hudOverlays) do
+            overlay:delete()
+        end
+        self.hudOverlays = nil
+    end
+end
+
+function ServerPlayerCount:getHudOverlays()
+    if self.hudOverlays ~= nil then
+        return self.hudOverlays
+    end
+
+    if g_overlayManager == nil or HUD == nil or HUD.COLOR == nil or HUD.COLOR.BACKGROUND == nil then
+        return nil
+    end
+
+    local overlays = {
+        bgLeft = g_overlayManager:createOverlay("gui.gameInfo_left", 0, 0, 0, 0),
+        bgScale = g_overlayManager:createOverlay("gui.gameInfo_middle", 0, 0, 0, 0),
+        bgRight = g_overlayManager:createOverlay("gui.gameInfo_right", 0, 0, 0, 0),
+        icon = g_overlayManager:createOverlay("gui.icon_multiplayer", 0, 0, 0, 0),
+        stateDot = g_overlayManager:createOverlay("gui.whiteCircleFilled", 0, 0, 0, 0)
+    }
+
+    if overlays.bgLeft == nil or overlays.bgScale == nil or overlays.bgRight == nil or overlays.icon == nil or overlays.stateDot == nil then
+        return nil
+    end
+
+    local r, g, b, a = unpack(HUD.COLOR.BACKGROUND)
+    overlays.bgLeft:setColor(r, g, b, a)
+    overlays.bgScale:setColor(r, g, b, a)
+    overlays.bgRight:setColor(r, g, b, a)
+
+    self.hudOverlays = overlays
+    return overlays
+end
+
+function ServerPlayerCount:drawOverlay(display)
     if g_currentMission == nil or not self:isMultiplayerSession() then
+        return
+    end
+
+    local anchor = display.infoBgLeft
+    local overlays = self:getHudOverlays()
+    if anchor == nil or overlays == nil then
         return
     end
 
@@ -108,18 +155,49 @@ function ServerPlayerCount:drawOverlay()
         stateColor = self.errorColor
     end
 
-    local boxX = self.hudX - self.boxWidth
-    local boxY = self.hudY
+    local height = anchor.height
+    local posY = anchor.y
+    local capWidth = display:scalePixelToScreenWidth(10)
+    local boxSpacing = display:scalePixelToScreenWidth(8)
+    local spacing = display:scalePixelToScreenWidth(8)
+    local iconWidth, iconHeight = display:scalePixelValuesToScreenVector(40, 40)
+    local dotWidth, dotHeight = display:scalePixelValuesToScreenVector(12, 12)
+    local textSize = display:scalePixelToScreenHeight(17)
+    local textOffsetY = display:scalePixelToScreenHeight(27)
 
-    drawFilledRect(boxX, boxY, self.boxWidth, self.boxHeight, self.backgroundColor[1], self.backgroundColor[2], self.backgroundColor[3], self.backgroundColor[4])
-    drawFilledRect(boxX + self.iconOffsetX, boxY + self.iconOffsetY, self.iconSize, self.iconSize, stateColor[1], stateColor[2], stateColor[3], stateColor[4])
-
-    setTextAlignment(RenderText.ALIGN_LEFT)
-    setTextBold(true)
-    setTextColor(self.textColor[1], self.textColor[2], self.textColor[3], self.textColor[4])
-    renderText(boxX + self.textOffsetX, boxY + self.textOffsetY, self.textSize, valueText)
     setTextBold(false)
+    local textWidth = getTextWidth(textSize, valueText)
+    local scaleWidth = iconWidth + spacing + textWidth + spacing + dotWidth
+    local posX = anchor.x-boxSpacing-capWidth-scaleWidth-capWidth
+
+    overlays.bgLeft:setPosition(posX, posY)
+    overlays.bgLeft:setDimension(capWidth, height)
+    overlays.bgLeft:render()
+
+    overlays.bgScale:setPosition(posX + capWidth, posY)
+    overlays.bgScale:setDimension(scaleWidth, height)
+    overlays.bgScale:render()
+
+    overlays.bgRight:setPosition(posX + capWidth + scaleWidth, posY)
+    overlays.bgRight:setDimension(capWidth, height)
+    overlays.bgRight:render()
+
+    local iconX = posX + capWidth
+    overlays.icon:setPosition(iconX, posY + (height-iconHeight) * 0.5)
+    overlays.icon:setDimension(iconWidth, iconHeight)
+    overlays.icon:render()
+
+    local textX = iconX + iconWidth + spacing
     setTextAlignment(RenderText.ALIGN_LEFT)
+    setTextColor(self.textColor[1], self.textColor[2], self.textColor[3], self.textColor[4])
+    renderText(textX, posY + textOffsetY, textSize, valueText)
+
+    overlays.stateDot:setColor(stateColor[1], stateColor[2], stateColor[3], stateColor[4])
+    overlays.stateDot:setPosition(textX + textWidth + spacing, posY + (height-dotHeight) * 0.5)
+    overlays.stateDot:setDimension(dotWidth, dotHeight)
+    overlays.stateDot:render()
+
+    setTextColor(1, 1, 1, 1)
 end
 
 
@@ -143,6 +221,54 @@ function ServerPlayerCount:isMultiplayerSession()
     return g_client ~= nil and g_server == nil
 end
 
+local function findSettingsTemplates(element, depth, result)
+    if element == nil or depth > 6 then
+        return
+    end
+
+    if result.sectionHeader == nil and element.name == "sectionHeader" then
+        result.sectionHeader = element
+    end
+
+    if result.buttonElement == nil and element.typeName == "Bitmap" and element.elements ~= nil then
+        for _, child in pairs(element.elements) do
+            if child.typeName == "Button" then
+                result.buttonElement = element
+                break
+            end
+        end
+    end
+
+    if element.elements ~= nil then
+        for _, child in pairs(element.elements) do
+            findSettingsTemplates(child, depth + 1, result)
+        end
+    end
+end
+
+local function createSettingsButtonRow(scrollPanel, buttonElement, labelText, buttonText, buttonId, onClickCallback)
+    local row = buttonElement:clone(scrollPanel)
+    row.id = nil
+
+    local buttonInRow = nil
+
+    for _, element in pairs(row.elements) do
+        if element.typeName == "Text" then
+            element:setText(labelText)
+            element.id = nil
+        elseif element.typeName == "Button" then
+            element:setText(buttonText)
+            element.isAlwaysFocusedOnOpen = false
+            element.focused = false
+            element.id = buttonId
+            element.onClickCallback = onClickCallback
+            buttonInRow = element
+        end
+    end
+
+    return row, buttonInRow
+end
+
 function ServerPlayerCount:initializeSettingsButton()
     if self.settingsInitialized or g_inGameMenu == nil or g_inGameMenu.pageSettings == nil then
         return
@@ -155,54 +281,36 @@ function ServerPlayerCount:initializeSettingsButton()
         return
     end
 
-    local sectionHeader = nil
-    local buttonElement = nil
+    local templates = {}
+    findSettingsTemplates(settingsPage, 0, templates)
 
-    for _, element in pairs(scrollPanel.elements) do
-        if element.name == "sectionHeader" and sectionHeader == nil then
-            sectionHeader = element
-        end
-
-        if element.typeName == "Bitmap" and element.elements ~= nil then
-            for _, child in pairs(element.elements) do
-                if child.typeName == "Button" and buttonElement == nil then
-                    buttonElement = element
-                    break
-                end
-            end
-        end
-
-        if sectionHeader ~= nil and buttonElement ~= nil then
-            break
-        end
-    end
-
-    if sectionHeader == nil or buttonElement == nil then
+    if templates.sectionHeader == nil or templates.buttonElement == nil then
         return
     end
 
-    local header = sectionHeader:clone(scrollPanel)
+    local header = templates.sectionHeader:clone(scrollPanel)
     header:setText(g_i18n:getText("spc_settings_header"))
     self.settingsHeader = header
 
-    local template = buttonElement:clone(scrollPanel)
-    template.id = nil
-    self.settingsRow = template
+    self.settingsRow, self.resetButton = createSettingsButtonRow(
+        scrollPanel,
+        templates.buttonElement,
+        g_i18n:getText("spc_settings_resetStatus_label"),
+        g_i18n:getText("spc_settings_resetStatus_button"),
+        "spc_resetStatus",
+        ServerPlayerCount.onSettingsButtonClick
+    )
 
-    for _, element in pairs(template.elements) do
-        if element.typeName == "Text" then
-            element:setText(g_i18n:getText("spc_settings_resetStatus_label"))
-            element.id = nil
-        elseif element.typeName == "Button" then
-            element:setText(g_i18n:getText("spc_settings_resetStatus_button"))
-            element.isAlwaysFocusedOnOpen = false
-            element.focused = false
-            element.id = "spc_resetStatus"
-            element.onClickCallback = ServerPlayerCount.onSettingsButtonClick
-            self.resetButton = element
-        end
-    end
+    self.warningsRow, self.warningsButton = createSettingsButtonRow(
+        scrollPanel,
+        templates.buttonElement,
+        g_i18n:getText("spc_settings_showWarnings_label"),
+        self:getShowWarningsButtonText(),
+        "spc_showWarnings",
+        ServerPlayerCount.onSettingsButtonClick
+    )
 
+    scrollPanel:invalidateLayout()
     self.settingsInitialized = true
 end
 
@@ -211,15 +319,20 @@ function ServerPlayerCount.onSettingsButtonClick(_, state, button)
         button = state
     end
 
-    if button == nil or button.id ~= "spc_resetStatus" then
+    if button == nil then
         return
     end
 
-    ServerPlayerCount:resetServerLogState()
+    if button.id == "spc_resetStatus" then
+        ServerPlayerCount:resetServerLogState()
+    elseif button.id == "spc_showWarnings" then
+        ServerPlayerCount:toggleShowWarnings()
+    end
 end
 
 function ServerPlayerCount:onSettingsFrameOpen()
     local isMultiplayer = self:isMultiplayerSession()
+    local isServer = g_server ~= nil
 
     if self.settingsHeader ~= nil then
         self.settingsHeader:setVisible(isMultiplayer)
@@ -230,7 +343,38 @@ function ServerPlayerCount:onSettingsFrameOpen()
     end
 
     if self.resetButton ~= nil then
-        self.resetButton:setDisabled(not isMultiplayer)
+        self.resetButton:setDisabled(not (isMultiplayer and self:getCanResetServerLogState()))
+    end
+
+    if self.warningsRow ~= nil then
+        self.warningsRow:setVisible(isMultiplayer and isServer)
+    end
+
+    if self.warningsButton ~= nil then
+        self.warningsButton:setText(self:getShowWarningsButtonText())
+        self.warningsButton:setDisabled(not (isMultiplayer and isServer))
+    end
+end
+
+function ServerPlayerCount:getShowWarningsButtonText()
+    if self.showWarnings then
+        return g_i18n:getText("spc_settings_showWarnings_on")
+    end
+    return g_i18n:getText("spc_settings_showWarnings_off")
+end
+
+function ServerPlayerCount:toggleShowWarnings()
+    if g_server == nil then
+        return
+    end
+
+    self.showWarnings = not self.showWarnings
+    if not self.showWarnings and self.serverLogState == 1 then
+        self:setServerLogState(0, true)
+    end
+
+    if self.warningsButton ~= nil then
+        self.warningsButton:setText(self:getShowWarningsButtonText())
     end
 end
 
@@ -326,23 +470,120 @@ function ServerPlayerCount:broadcastServerLogState()
     end
 end
 
+function ServerPlayerCount:getIsConnectionMasterUser(connection)
+    local userManager = g_currentMission ~= nil and g_currentMission.userManager or nil
+    if userManager == nil then
+        return false
+    end
+
+    local user = userManager:getUserByConnection(connection)
+    return user ~= nil and user:getIsMasterUser()
+end
+
+function ServerPlayerCount:getCanResetServerLogState()
+    if g_server ~= nil then
+        return true
+    end
+
+    return g_currentMission ~= nil and g_currentMission.isMasterUser == true
+end
+
 function ServerPlayerCount:resetServerLogState()
     if g_server ~= nil then
         self:setServerLogState(0, true)
     elseif g_client ~= nil then
-        g_client:getServerConnection():sendEvent(ServerPlayerCountStatusEvent.new(0, true))
+        if self:getCanResetServerLogState() then
+            g_client:getServerConnection():sendEvent(ServerPlayerCountStatusEvent.new(0, true))
+        end
     else
         self:setServerLogState(0, false)
     end
 end
 
+function ServerPlayerCount:reportLogMessage(state)
+    if g_server == nil then
+        return
+    end
+
+    if state == 1 and not self.showWarnings then
+        return
+    end
+
+    if state > self.serverLogState then
+        self.serverLogState = state
+        self.stateDirty = true
+    end
+end
+
+local function getSettingsFilePath()
+    if g_currentMission == nil or g_currentMission.missionInfo == nil then
+        return nil
+    end
+
+    local savegameDir = g_currentMission.missionInfo.savegameDirectory
+    if savegameDir == nil then
+        return nil
+    end
+
+    return savegameDir .. "/serverPlayerCount.xml"
+end
+
+function ServerPlayerCount:loadSettings()
+    self.showWarnings = false
+
+    if g_currentMission == nil or not g_currentMission:getIsServer() then
+        return
+    end
+
+    local path = getSettingsFilePath()
+    if path == nil or not fileExists(path) then
+        return
+    end
+
+    local xmlFile = XMLFile.load("spcSettingsXML", path)
+    if xmlFile == nil then
+        return
+    end
+
+    self.showWarnings = xmlFile:getBool("serverPlayerCount.settings#showWarnings", false)
+    xmlFile:delete()
+end
+
+function ServerPlayerCount:saveSettings()
+    if g_currentMission == nil or not g_currentMission:getIsServer() then
+        return
+    end
+
+    local path = getSettingsFilePath()
+    if path == nil then
+        return
+    end
+
+    local xmlFile = XMLFile.create("spcSettingsXML", path, "serverPlayerCount")
+    if xmlFile == nil then
+        return
+    end
+
+    xmlFile:setBool("serverPlayerCount.settings#showWarnings", self.showWarnings)
+    xmlFile:save()
+    xmlFile:delete()
+end
+
 addModEventListener(ServerPlayerCount)
+
+FSBaseMission.loadMapFinished = Utils.appendedFunction(FSBaseMission.loadMapFinished, function()
+    ServerPlayerCount:loadSettings()
+end)
+
+FSCareerMissionInfo.saveToXMLFile = Utils.appendedFunction(FSCareerMissionInfo.saveToXMLFile, function()
+    ServerPlayerCount:saveSettings()
+end)
 
 
 if GameInfoDisplay ~= nil and GameInfoDisplay.draw ~= nil then
     GameInfoDisplay.draw = Utils.appendedFunction(GameInfoDisplay.draw, function(display)
         if display ~= nil and type(display.getVisible) == "function" and display:getVisible() then
-            ServerPlayerCount:drawOverlay()
+            ServerPlayerCount:drawOverlay(display)
         end
     end)
 end
@@ -352,24 +593,41 @@ InGameMenuSettingsFrame.onFrameOpen = Utils.appendedFunction(InGameMenuSettingsF
     ServerPlayerCount:onSettingsFrameOpen()
 end)
 
-if Logging ~= nil then
-    if Logging.warning ~= nil then
-        local serverPlayerCountOriginalWarning = Logging.warning
-        Logging.warning = function(...)
-            if g_server ~= nil then
-                ServerPlayerCount:setServerLogState(1, true)
-            end
-            return serverPlayerCountOriginalWarning(...)
-        end
+local function wrapLogFunction(owner, name, state)
+    local original = owner[name]
+    if type(original) ~= "function" then
+        return
     end
 
-    if Logging.error ~= nil then
-        local serverPlayerCountOriginalError = Logging.error
-        Logging.error = function(...)
-            if g_server ~= nil then
-                ServerPlayerCount:setServerLogState(2, true)
-            end
-            return serverPlayerCountOriginalError(...)
-        end
+    owner[name] = function(...)
+        ServerPlayerCount:reportLogMessage(state)
+        return original(...)
     end
+end
+
+if Logging ~= nil then
+    wrapLogFunction(Logging, "warning", 1)
+    wrapLogFunction(Logging, "xmlWarning", 1)
+    wrapLogFunction(Logging, "error", 2)
+    wrapLogFunction(Logging, "xmlError", 2)
+end
+
+local function getGlobalEnvironment()
+    local environment = getfenv(0)
+    local metatable = getmetatable(environment)
+    if metatable ~= nil and type(metatable.__index) == "table" then
+        return metatable.__index
+    end
+    return environment
+end
+
+local globalEnvironment = getGlobalEnvironment()
+wrapLogFunction(globalEnvironment, "printWarning", 1)
+wrapLogFunction(globalEnvironment, "printError", 2)
+
+if setLuaErrorHandler ~= nil then
+    setLuaErrorHandler(function(message)
+        ServerPlayerCount:reportLogMessage(2)
+        return message
+    end)
 end
